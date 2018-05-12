@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="4.0" type="plugin" group="media-action" method="upgrade">
-	<name>plg_media-action_smart-crop</name>
+	<name>PLG_MEDIA-ACTION_SMART-CROP</name>
 	<author>Joomla! Project</author>
 	<creationDate>May 2018</creationDate>
 	<copyright>Copyright (C) 2005 - 2018 Open Source Matters. All rights reserved.</copyright>
