@@ -11,6 +11,8 @@
 	<description>PLG_MEDIA-ACTION_SMART-CROP_XML_DESCRIPTION</description>
 	<files>
 		<filename plugin="smart-crop">smart-crop.php</filename>
+		<filename>responsify.js</filename>
+		<filename>index.html</filename>
 		<folder>form</folder>
 	</files>
 	<languages folder="language">
