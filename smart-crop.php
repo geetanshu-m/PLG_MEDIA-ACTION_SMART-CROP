@@ -41,6 +41,6 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 	 */
 	protected function loadCss()
 	{
-        parent::loadCss();
-    }
+		parent::loadCss();
+	}
 }
