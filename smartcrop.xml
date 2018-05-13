@@ -9,9 +9,15 @@
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>4.0.0</version>
 	<description>PLG_MEDIA-ACTION_SMART-CROP_XML_DESCRIPTION</description>
+	<media destination="plg_media-action_smartcrop" folder="media">
+		<folder>js</folder>
+		<folder>css</css>
+	</media>
+	<media destination="vendor" folder="media">
+		<folder>ResponsifyJS</folder>
+	</media>
 	<files>
 		<filename plugin="smart-crop">smart-crop.php</filename>
-		<filename>responsify.js</filename>
 		<filename>index.html</filename>
 		<folder>form</folder>
 	</files>
