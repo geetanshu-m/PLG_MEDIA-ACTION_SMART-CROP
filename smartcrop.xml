@@ -12,8 +12,6 @@
 	<media destination="plg_media-action_smartcrop" folder="media">
 		<folder>js</folder>
 		<folder>css</css>
-	</media>
-	<media destination="vendor" folder="media">
 		<folder>ResponsifyJS</folder>
 	</media>
 	<files>
