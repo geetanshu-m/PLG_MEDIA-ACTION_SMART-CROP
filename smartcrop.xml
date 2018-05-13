@@ -15,9 +15,9 @@
 		<folder>ResponsifyJS</folder>
 	</media>
 	<files>
-		<filename plugin="smart-crop">smart-crop.php</filename>
-		<filename>index.html</filename>
+		<filename plugin="smartcrop">smartcrop.php</filename>
 		<folder>form</folder>
+		<filename>index.html</filename>
 	</files>
 	<languages folder="language">
 		<language tag="en-GB">en-GB.plg_media-action_smart-crop.ini</language>
