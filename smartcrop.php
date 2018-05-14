@@ -18,4 +18,29 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plugin\MediaActionPlugin
 {
+    /**
+	 * Load the javascript files of the plugin.
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0.0
+	 */
+	protected function loadJs()
+	{
+		parent::loadJs();
+
+		HTMLHelper::_('script', 'vendor/ResponsifyJS/responsify.js', array('version' => 'auto', 'relative' => true));
+	}
+
+	/**
+	 * Load the CSS files of the plugin.
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0.0
+	 */
+	protected function loadCss()
+	{
+		parent::loadCss();
+	}
 }
