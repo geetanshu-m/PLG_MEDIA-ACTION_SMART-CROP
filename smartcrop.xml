@@ -9,10 +9,6 @@
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>4.0.0</version>
 	<description>PLG_MEDIA-ACTION_SMART-CROP_XML_DESCRIPTION</description>
-	<media folder="media">
-		<folder>js</folder>
-		<folder>css</css>
-	</media>
 	<files>
 		<filename plugin="smartcrop">smartcrop.php</filename>
 		<folder>form</folder>
