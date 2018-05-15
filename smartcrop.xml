@@ -16,6 +16,7 @@
     </media>
     <files>
         <filename plugin="smartcrop">smartcrop.php</filename>
+        <folder>form</folder>
         <filename>index.html</filename>
     </files>
     <languages folder="languages">
