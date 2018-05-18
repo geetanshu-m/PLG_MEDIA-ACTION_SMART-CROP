@@ -14,7 +14,7 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 		// Initiate the cropper
 		Joomla.MediaManager.Edit.smartcrop = new Cropper(image, {
 			viewMode: 1,
-			responsive: true,
+			responsive: false,
 			restore: true,
 			autoCrop: false,
 			movable: true,
