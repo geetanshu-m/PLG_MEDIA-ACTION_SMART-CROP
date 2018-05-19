@@ -19,7 +19,7 @@
 		/>
 		<field
 			name="data_focus_top"
-			type="number"
+			type="text"
 			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_TOP"
 			hiddenLabel="true"
 			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_TOP_PRE"
@@ -28,7 +28,7 @@
 
         <field
 			name="data_focus_bottom"
-			type="number"
+			type="text"
 			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_BOTTOM"
 			hiddenLabel="true"
 			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_BOTTOM_PRE"
@@ -37,7 +37,7 @@
 
         <field
 			name="data_focus_left"
-			type="number"
+			type="text"
 			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_LEFT"
 			hiddenLabel="true"
 			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_LEFT_PRE"
@@ -46,7 +46,7 @@
 
         <field
 			name="data_focus_right"
-			type="number"
+			type="text"
 			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_RIGHT"
 			hiddenLabel="true"
 			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_RIGHT_PRE"
