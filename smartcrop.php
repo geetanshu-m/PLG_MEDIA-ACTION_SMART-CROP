@@ -18,29 +18,53 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plugin\MediaActionPlugin
 {
-    /**
-     * Load the javascript files of the plugin.
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function loadJs()
-    {
-        parent::loadJs();
+	/**
+	 * Load the language file on instantiation (for Joomla! 3.X only)
+	 *
+	 * @var    boolean
+	 * @since  3.3
+	 */
+	protected $autoloadLanguage = true;
 
-        HTMLHelper::_('script', 'plg_media-action_smartcrop/responsifyjs/responsify.js', array('version' => 'auto', 'relative' => true));
-    }
+	/**
+	 * Load the javascript files of the plugin.
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0.0
+	 */
+	protected function loadJs()
+	{
+		parent::loadJs();
 
-    /**
-     * Load the CSS files of the plugin.
-     *
-     * @return  void
-     *
-     * @since   4.0.0
-     */
-    protected function loadCss()
-    {
-        parent::loadCss();
-    }
+		/*
+		* This Library is to be used on the client side
+		*/
+
+		// HTMLHelper::_('script', 'plg_media-action_smartcrop/responsifyjs/responsify.js', array('version' => 'auto', 'relative' => true));
+	}
+
+	/**
+	 * Load the CSS files of the plugin.
+	 *
+	 * @return  void
+	 *
+	 * @since   4.0.0
+	 */
+	protected function loadCss()
+	{
+		parent::loadCss();
+	}
+
+	/*
+	* Defineing the variables
+	*
+	* @var array
+	*/
+	protected $data_focus = array(
+		'data-focus-top' => '',
+		'data-focus-left' => '',
+		'data-focus-bottom' => '',
+		'data-focus-right' => ''
+	);
 }
