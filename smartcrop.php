@@ -67,4 +67,22 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 		'data-focus-bottom' => '',
 		'data-focus-right' => ''
 	);
+	
+	/*
+	* Saveing the Data Focus point into the JSON file.
+	*/
+
+
+	public function saveDataFocusPoint(){
+	}
+
+	/*
+	* Replaceing img tags with the tags with the data-focus points.
+	*/
+
+	public function replaceImg(&$article){
+		$images = array();
+		preg_match_all('/{img src=(.*?)}/is', $article->text, $images);
+		print_r($images);
+	}
 }
