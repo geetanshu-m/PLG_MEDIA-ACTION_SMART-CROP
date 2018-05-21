@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\HTML\HTMLHelper;
 
 /**
@@ -18,42 +19,40 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plugin\MediaActionPlugin
 {
-	/**
-	 * Load the language file on instantiation (for Joomla! 3.X only)
-	 *
-	 * @var    boolean
-	 * @since  3.3
-	 */
-	protected $autoloadLanguage = true;
+	/*
+	* @Override the parent function onContentPrepareForm
+	*
+	* @param   Form       $form  The form
+	* @param   \stdClass  $data  The data
+	*
+	* @return  void
+	*
+	* @since   4.0.0
+	*/
 
-	/**
-	 * Load the javascript files of the plugin.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	protected function loadJs()
+	public function onContentPrepareForm(Form $form, $data)
 	{
+		// Check if it is the right form
+		if ($form->getName() != 'com_media.file')
+		{
+			return;
+		}
+
+		// Loading the JS file from the parent class
 		parent::loadJs();
 
-		/*
-		* This Library is to be used on the client side
-		*/
-
-		// HTMLHelper::_('script', 'plg_media-action_smartcrop/responsifyjs/responsify.js', array('version' => 'auto', 'relative' => true));
-	}
-
-	/**
-	 * Load the CSS files of the plugin.
-	 *
-	 * @return  void
-	 *
-	 * @since   4.0.0
-	 */
-	protected function loadCss()
-	{
+		// Loading the CSS file from the parent class
 		parent::loadCss();
+
+		// The file with the params for the edit view
+		$paramsFile = JPATH_PLUGINS . '/media-action/' . $this->_name . '/form/' . $this->_name . '.xml';
+
+		// When the file exists, load it into the form
+		if (file_exists($paramsFile))
+		{
+			$form->loadFile($paramsFile);
+		}
+		
 	}
 
 	/*
@@ -67,7 +66,7 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 		'data-focus-bottom' => '',
 		'data-focus-right' => ''
 	);
-	
+
 	/*
 	* Saveing the Data Focus point into the JSON file.
 	*/
