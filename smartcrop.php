@@ -19,6 +19,16 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plugin\MediaActionPlugin
 {
+	public function __construct()
+	{
+		echo "2";
+	}
+
+	public function onContentPrepare($context, &$row, $params, $page = 0)
+	{
+		echo "1";
+	}
+
 	/*
 	* @Override the parent function onContentPrepareForm
 	*
@@ -53,6 +63,12 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 			$form->loadFile($paramsFile);
 		}
 		
+		// $this->saveDataFocusPoint($form->getValue("jform_smartcrop_quality","","hello"));
+	}
+
+	public function onContentPrepareData($context,$data){
+		print_r($context);
+
 	}
 
 	/*
@@ -71,8 +87,8 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 	* Saveing the Data Focus point into the JSON file.
 	*/
 
-
-	public function saveDataFocusPoint(){
+	public function saveDataFocusPoint($form){
+		//print_r($form);
 	}
 
 	/*
@@ -82,6 +98,7 @@ class PlgMediaActionSmartCrop extends \Joomla\Component\Media\Administrator\Plug
 	public function replaceImg(&$article){
 		$images = array();
 		preg_match_all('/{img src=(.*?)}/is', $article->text, $images);
+		echo "HI...";
 		print_r($images);
 	}
 }
