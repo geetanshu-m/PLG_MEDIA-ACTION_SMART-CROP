@@ -12,3 +12,10 @@ Refrence layout for the original integrated plugin.
 ```
 HTMLHelper::_('script', 'media/plg_media-action_smartcrop/responsifyjs/responsify.min.js', ['version' => 'auto', 'relative' => false]);
 ```
+
+#### Dependencies 
+
+Along with this plugin one needs to install
+- Adaptive Image content plugin
+- Adaptive Image controller
+in order to make it functional.
