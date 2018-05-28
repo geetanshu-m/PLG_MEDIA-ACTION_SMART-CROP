@@ -12,7 +12,7 @@
 	<files>
 		<filename plugin="adaptiveimage">adaptiveimage.php</filename>
 	</files>
-	<languages>
+	<languages folder="languages">
 		<language tag="en-GB">en-GB.plg_content_adaptiveimage.ini</language>
 		<language tag="en-GB">en-GB.plg_content_adaptiveimage.sys.ini</language>
 	</languages>
