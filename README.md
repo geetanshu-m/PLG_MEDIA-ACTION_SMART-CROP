@@ -17,5 +17,7 @@ HTMLHelper::_('script', 'media/plg_media-action_smartcrop/responsifyjs/responsif
 
 Along with this plugin one needs to install
 - Adaptive Image content plugin
+-- Plugin which parse the focus point into the front end.
 - Adaptive Image controller
+-- Controller which gets and sets the focus point into backend.
 in order to make it functional.
