@@ -21,3 +21,5 @@ Along with this plugin one needs to install
 - Adaptive Image controller
 -- Controller which gets and sets the focus point into backend.
 in order to make it functional.
+- Focus Store Class
+-- It consist of the methods to store the data focus points.
