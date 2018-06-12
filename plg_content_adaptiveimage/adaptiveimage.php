@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Media\Administrator\Controller\AdaptiveImageController;
 
 /**
  * Adaptive Image Plugin
@@ -19,7 +20,6 @@ use Joomla\CMS\HTML\HTMLHelper;
  */
 class PlgContentAdaptiveImage extends CMSPlugin
 {
-
 	/**
 	 * Load the language file on instantiation.
 	 *
@@ -28,7 +28,6 @@ class PlgContentAdaptiveImage extends CMSPlugin
 	 * @since  4.0.0
 	 */
 	protected $autoloadLanguage = true;
-
 	/**
 	 * Plugin that inserts focus points into the image.
 	 *
@@ -43,7 +42,7 @@ class PlgContentAdaptiveImage extends CMSPlugin
 	{
 
 		// Add ResponsifyJS into the client page
-		//HTMLHelper::_('script', 'media/vendor/responsifyjs/responsify.js', ['version' => 'auto', 'relative' => false]);
+		// HTMLHelper::_('script', 'media/vendor/responsifyjs/responsify.js', ['version' => 'auto', 'relative' => false]);
 
 		// Don't run this plugin when the content is being indexed
 		if ($context === 'com_finder.indexer')
@@ -63,8 +62,7 @@ class PlgContentAdaptiveImage extends CMSPlugin
 	 * Inserts focus points into the image.
 	 *
 	 * @param   string  &$text    HTML string.
-	 * @param   mixed   &$params  Additional parameters. Parameter "mode" (integer, default 1)
-	 *                             replaces addresses with "mailto:" links if nonzero.
+	 * @param   mixed   &$params  Additional parameters.
 	 *
 	 * @return  boolean  True on success.
 	 */
@@ -77,39 +75,40 @@ class PlgContentAdaptiveImage extends CMSPlugin
 		preg_match_all($searchImage, $text, $images);
 
 		// Process image one by one
-		foreach($images[0] as $key => $image)
+		foreach ($images[0] as $key => $image)
 		{
-			// clean path of the image and store in $src[1].
+			// Clean path of the image and store in $src[1].
 			preg_match('(src="([^"]+)")', $image, $src);
 
-			// URL of the adaptive image controller
-			$getUrl = JURI::base() . 'index.php?option=com_content&task=adaptiveimage.getfocus&path=/'.$src[1];
+			// Image Path
+			$imgPath = "/" . $src[1];
 			
-			// Getting the data returned by the controller
-			$data = file_get_contents($getUrl);
+			// Takeing Focus Points
+			$obj = new AdaptiveImageController;
+			$data = $obj->execute("getfocus", $imgPath);
 
 			// If no data is found exit loop
-			if ( !$data )
+			if ($data)
 			{
-				break;
+				// Converts JSON data into php array
+				$data = json_decode($data, true);
+
+				// Inserting data into respective attibutes
+				$focus = "data-focus-left	=	\"" . $data['data-focus-left'] . "\"
+						data-focus-top		=	\"" . $data['data-focus-top'] . "\"
+						data-focus-right	=	\"" . $data['data-focus-right'] . "\"
+						data-focus-bottom	=	\"" . $data['data-focus-bottom'] . "\"
+						class = \"adaptiveimg\"/>";
+
+				// Adding attributes in the <img> tag
+				$newTag = str_replace("/>", $focus, $image);
+
+				// Replaceing the previous <img> tag with new one.
+				$text = str_replace($image, $newTag, $text);
 			}
 
-			// Converts JSON data into php array
-			$data = json_decode($data, true);
-
-			// Inserting data into respective attibutes
-			$focus = "data-focus-left	=	\"".$data['data-focus-left']	."\"
-					data-focus-top		=	\"".$data['data-focus-top']		."\"
-					data-focus-right	=	\"".$data['data-focus-right']	."\" 
-					data-focus-bottom	=	\"".$data['data-focus-bottom']	."\" />";
-
-			// Adding attributes in the <img> tag
-			$newTag = str_replace("/>", $focus, $image);
-
-			// Replaceing the previous <img> tag with new one.
-			$text = str_replace($image, $newTag, $text);
 		}
-		
+
 		return true;
 	}
 }
