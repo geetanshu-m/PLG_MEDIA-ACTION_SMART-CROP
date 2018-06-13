@@ -12,7 +12,7 @@ namespace Joomla\Component\Media\Administrator\Controller;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\Media\Administrator\FocusStore\FocusStoreClass;
+use Joomla\Component\Media\Administrator\FocusStore\JSONFocusStore;
 
 /**
  * Adaptive Image Controller Class
@@ -46,13 +46,8 @@ class AdaptiveImageController extends BaseController
 				"data-focus-bottom" => $_GET['data-focus-bottom'],
 				"data-focus-right" => $_GET['data-focus-right']
 			);
-			$obj = new FocusStoreClass;
-			$obj->setFocus($dataFocus, $imgPath);
-		}
-		elseif ($task == "getfocus" && $imgPath != null)
-		{
-			$obj = new FocusStoreClass;
-			return $obj->getFocus($imgPath);
+			$storage = new JSONFocusStore;
+			$storage->setFocus($dataFocus, $imgPath);
 		}
 
 	}
