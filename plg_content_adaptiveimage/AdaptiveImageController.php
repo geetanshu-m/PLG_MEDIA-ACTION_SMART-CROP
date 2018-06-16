@@ -12,7 +12,8 @@ namespace Joomla\Component\Media\Administrator\Controller;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\Media\Administrator\FocusStore\JSONFocusStore;
+use Joomla\Component\Media\Administrator\AdaptiveImage\FocusStoreInterface;
+use Joomla\Component\Media\Administrator\AdaptiveImage\JSONFocusStore;
 
 /**
  * Adaptive Image Controller Class
@@ -28,43 +29,41 @@ class AdaptiveImageController extends BaseController
 	/**
 	 * Execute a task by triggering a method in the derived class.
 	 *
-	 * @param   string  $task     The task to perform.
-	 * @param   string  $imgPath  Path of the image.
+	 * @param   string  $task  The task to perform.
 	 *
-	 * @return  mixed   The value returned by the called method.
+	 * @return  boolean
 	 *
 	 * @since   4.0.0
 	 */
-	public function execute($task, $imgPath = null)
+	public function execute($task)
 	{
 		if ($task == "setfocus")
 		{
-			$imgPath = $this->imageSrc();
+			$imgPath = $this->input->getString('path');
 			$dataFocus = array (
-				"data-focus-top" => $_GET['data-focus-top'],
-				"data-focus-left" => $_GET['data-focus-left'],
-				"data-focus-bottom" => $_GET['data-focus-bottom'],
-				"data-focus-right" => $_GET['data-focus-right']
+				"data-focus-top" 	=> $this->input->getFloat('data-focus-top'),
+				"data-focus-left"	=> $this->input->getFloat('data-focus-left'),
+				"data-focus-bottom" => $this->input->getFloat('data-focus-bottom'),
+				"data-focus-right"	=> $this->input->getFloat('data-focus-right')
 			);
 			$storage = new JSONFocusStore;
-			$storage->setFocus($dataFocus, $imgPath);
+			return $this->performTask($storage, $dataFocus, $imgPath);
 		}
 
 	}
 	/**
-	 * Get the Image Path.
-	 *
-	 * index.php?option=com_media&task=adaptiveimage.getfocus&path=/images/sampledata/fruitshop/bananas_1.jpg
-	 *
-	 * @return  string
-	 *
-	 * @since   4.0.0
+	 * Call to the method of respective	class for the respective object passed
+	 * 
+	 * @param   FocusStoreInterface  $storage    Storage Object
+	 * @param   Array                $dataFocus  All the data focus points for image
+	 * @param   String               $imgPath    Image Path
+	 * 
+	 * @return boolean
+	 * 
+	 * @since 4.0.0
 	 */
-	public function imageSrc()
+	protected function performTask(FocusStoreInterface $storage, $dataFocus, $imgPath)
 	{
-		$src = $this->input->getString('path');
-
-		return $src;
+		return $storage->setFocus($dataFocus, $imgPath);
 	}
-
 }
