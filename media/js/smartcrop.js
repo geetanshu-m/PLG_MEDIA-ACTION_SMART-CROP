@@ -24,15 +24,31 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 			autoCropArea: 0,
 			minContainerWidth: image.offsetWidth,
 			minContainerHeight: image.offsetHeight,
+			setCanvasData: {
+				top: 0,
+				left: 0,
+				height: image.naturalHeight,
+				width: image.naturalWidth
+			},
 			crop: function (e) {
+				var left, top,
+					canvas_width, canvas_height,
+					image_width, image_height;
+
+				left = Math.round(e.detail.x);
+				top = Math.round(e.detail.y);
+				canvas_width = Math.round(e.detail.width);
+				canvas_height = Math.round(e.detail.height);
+
+				image_width = image.naturalWidth;
+				image_height = image.naturalHeight;
 
 				// Top, Bottom, Left, right are the data focus points
-                var canvas_data = this.cropper.getCropBoxData();
-                Joomla.MediaManager.Edit.smartcrop.cropper.top = (canvas_data.top / image.naturalHeight).toFixed(2);
-                Joomla.MediaManager.Edit.smartcrop.cropper.bottom = ((canvas_data.height + canvas_data.top) / image.naturalHeight).toFixed(2);
-                Joomla.MediaManager.Edit.smartcrop.cropper.left = (canvas_data.left / image.naturalWidth).toFixed(2);
-				Joomla.MediaManager.Edit.smartcrop.cropper.right = ((canvas_data.width + canvas_data.left) / image.naturalWidth).toFixed(2);
-				
+                Joomla.MediaManager.Edit.smartcrop.cropper.top = (top / image_height).toFixed(2);
+                Joomla.MediaManager.Edit.smartcrop.cropper.bottom = ((canvas_height + top) / image_height).toFixed(2);
+                Joomla.MediaManager.Edit.smartcrop.cropper.left = (left / image_width).toFixed(2);
+				Joomla.MediaManager.Edit.smartcrop.cropper.right = ((canvas_width + left) / image_width).toFixed(2);
+				 
 				// Setting the computed focus point into the input fields
 				document.getElementById('jform_data_focus_top').value = Joomla.MediaManager.Edit.smartcrop.cropper.top;
 				document.getElementById('jform_data_focus_bottom').value = Joomla.MediaManager.Edit.smartcrop.cropper.bottom;
@@ -66,7 +82,7 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 					"&data-focus-bottom="+Joomla.MediaManager.Edit.smartcrop.cropper.bottom+
 					"&data-focus-right="+Joomla.MediaManager.Edit.smartcrop.cropper.right;
 			var xhr = new XMLHttpRequest();
-			var url = window.location.origin+"/adaptive_images/index.php?option=com_content&task=adaptiveimage.setfocus&path="+path;
+			var url = resolveBaseUrl() +"/administrator/index.php?option=com_media&task=adaptiveimage.setfocus&path="+path;
 			url += data;
 			xhr.open("GET", url, true);
 			xhr.send();
@@ -89,5 +105,14 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 		}
 		return false;
 	};
+
+	function resolveBaseUrl() {
+		var basePath = window.location.origin;
+		var url = window.location.pathname.split('/');
+		if (url[1]!='administrator') {
+			return basePath+"/"+url[1];
+		}
+		return basePath;
+	}
 
 })();
