@@ -1,20 +1,17 @@
 <?php
 /**
- * @package     Joomla.Administrator
+ * @package     Joomla
  * @subpackage  com_media
  *
  * @copyright   Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-namespace Joomla\Component\Media\Administrator\AdaptiveImage;
+namespace Joomla\CMS\AdaptiveImage;
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\Media\Administrator\AdaptiveImage\FocusStoreInterface;
-
-\JLoader::import('joomla.filesystem.file');
+use Joomla\CMS\AdaptiveImage\FocusStoreInterface;
 
 /**
  * Focus Store Class
@@ -51,53 +48,47 @@ class JSONFocusStore implements FocusStoreInterface
 	 *
 	 * @param   array   $dataFocus  Array of the values of diffrent focus point
 	 *
-	 * @param   string  $filePath   Full path for the file
+	 * @param   string  $imgPath    Full path for the file
 	 *
 	 * @return  boolean
 	 *
 	 * @since 4.0.0
 	 */
-	public function setFocus($dataFocus,$filePath)
+	public function setFocus($dataFocus,$imgPath)
 	{
 		$newEntry = array(
-			$filePath => array(
-				"data-focus-top" => $dataFocus['data-focus-top'],
-				"data-focus-left" => $dataFocus['data-focus-left'],
+			$imgPath => array(
+				"data-focus-top" 	=> $dataFocus['data-focus-top'],
+				"data-focus-left" 	=> $dataFocus['data-focus-left'],
 				"data-focus-bottom" => $dataFocus['data-focus-bottom'],
-				"data-focus-right" => $dataFocus['data-focus-right']
+				"data-focus-right" 	=> $dataFocus['data-focus-right'],
+				"box-left"			=> $dataFocus['box-left'],
+				"box-top"			=> $dataFocus['box-top'],
+				"box-width"			=> $dataFocus['box-width'],
+				"box-height"		=> $dataFocus['box-height']
 			)
 		);
 
 		if (filesize(static::$dataLocation))
 		{
-			$openFileRead = fopen(static::$dataLocation, "r");
-
-			$prevData = fread($openFileRead, filesize(static::$dataLocation));
-
-			fclose($openFileRead);
+			$prevData = file_get_contents(static::$dataLocation);
 
 			$prevData = json_decode($prevData, true);
 
-			$prevData[$filePath]["data-focus-top"] = $dataFocus['data-focus-top'];
-			$prevData[$filePath]["data-focus-left"] = $dataFocus['data-focus-left'];
-			$prevData[$filePath]["data-focus-bottom"] = $dataFocus['data-focus-bottom'];
-			$prevData[$filePath]["data-focus-right"] = $dataFocus['data-focus-right'];
+			$prevData[$imgPath]["data-focus-top"] 		= $dataFocus['data-focus-top'];
+			$prevData[$imgPath]["data-focus-left"] 		= $dataFocus['data-focus-left'];
+			$prevData[$imgPath]["data-focus-bottom"] 	= $dataFocus['data-focus-bottom'];
+			$prevData[$imgPath]["data-focus-right"] 	= $dataFocus['data-focus-right'];
+			$prevData[$imgPath]["box-left"] 			= $dataFocus['box-left'];
+			$prevData[$imgPath]["box-top"] 				= $dataFocus['box-top'];
+			$prevData[$imgPath]["box-width"] 			= $dataFocus['box-width'];
+			$prevData[$imgPath]["box-height"] 			= $dataFocus['box-height'];
 
-			$openFileWrite = fopen(static::$dataLocation, "w");
-
-			fwrite($openFileWrite, json_encode($prevData));
-
-			fclose($openFileWrite);
+			file_put_contents(static::$dataLocation, json_encode($prevData));
 		}
 		else
 		{
-			$openFile = fopen(static::$dataLocation, "w");
-
-			$JSONdata = json_encode($newEntry);
-
-			fwrite($openFile, $JSONdata);
-
-			fclose($openFile);
+			file_put_contents(static::$dataLocation, json_encode($newEntry));
 		}
 
 		return true;
@@ -107,30 +98,26 @@ class JSONFocusStore implements FocusStoreInterface
 	/**
 	 * Function to get the focus point
 	 *
-	 * @param   string  $imgSrc  Image Path
+	 * @param   string  $imgPath  Image Path
 	 *
 	 * @return  array
 	 *
 	 * @since 4.0.0
 	 */
-	public function getFocus($imgSrc)
+	public function getFocus($imgPath)
 	{
-		$openFileRead = fopen(static::$dataLocation, "r");
-
 		if (!filesize(static::$dataLocation))
 		{
 			return false;
 		}
 
-		$prevData = fread($openFileRead, filesize(static::$dataLocation));
-
-		fclose($openFileRead);
+		$prevData = file_get_contents(static::$dataLocation);
 
 		$prevData = json_decode($prevData, true);
 
-		if (array_key_exists($imgSrc, $prevData))
+		if (array_key_exists($imgPath, $prevData))
 		{
-			return json_encode($prevData[$imgSrc]);
+			return json_encode($prevData[$imgPath]);
 		}
 		else
 		{
