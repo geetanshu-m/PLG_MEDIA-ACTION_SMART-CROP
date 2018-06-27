@@ -6,11 +6,10 @@
  * @copyright   Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-
-namespace Joomla\Component\Media\Administrator\AdaptiveImage;
-
+namespace Joomla\CMS\AdaptiveImage;
 defined('_JEXEC') or die;
 
+use Joomla\Image\Image;
 /**
  * Used for cropping of the images around
  * the focus points.
@@ -19,109 +18,111 @@ defined('_JEXEC') or die;
  */
 class SmartCrop
 {
-    // Path of the image
-    public $imgSrc;
-    // Data focus points
-    public $dataFocus;
-    // Directory for storeing cache
-    public $cacheDir;
-    //Resized Image;
-    private $imageResized;
-    /**
-     * Set the requested image path.
-     * 
-     * @param  string  $imgSrc     Path of the image
-     * @param  array   $dataFocus  Focus points
-     * 
-     * @since 4.0.0
-     */    
-    public function __constructor($imgSrc, $dataFocus)
-    {
-        $this->imgSrc = $imgSrc;
-        $this->dataFocus = $dataFocus;
-    }
+	// Location for storing cache images
+	public $dataLocation = "../images/.cache";
 
-    /**
-     * Resize and crop the image
-     * 
-     * @return  boolean
-     * 
-     * @since 4.0.0
-     */
-    public function cropImage()
-    {
+	// Absolute image path
+	public $imgPath;
 
-    }
-    /**
-     * For finding the optimum dimention for cropping
-     * 
-     * @param  array  $dataFocus    Dimention of the Focus area
-     * @param  int    $finalWidth   Width of requested image
-     * @param  int    $finalHeight  Height of requested image
-     * @param  float  $imgWidth     Width of original image
-     * @param  float  $imgHeight    Height of the original image
-     * 
-     * @return  array
-     * 
-     * @since 4.0.0
-     */
-    public function getOptimumDimentions($dataFocus, $finalWidth, $finalHeight, $imgWidth, $imgHeight)
-    {
-        $finalDimentions = array();
-        $fx1 = $dataFocus['data-focus-left'];
-        $fy1 = $dataFocus['data-focus-top'];
-        $fx2 = $dataFocus['data-focus-right'];
-        $fy2 = $dataFocus['data-focus-bottom'];
-        if ($imgWidth/$imgHeight > $finalWidth/$finalWidth)
-        {
-            $fwidth = ( $fx2 - $fx1 ) * $imgWidth;
-            if ($fwidth/$imgHeight > $finalWidth/$finalHeight)
-            {
-                $finalDimentions['height'] = $imgHeight * $finalWidth/$finalHeight;
-                $finalDimentions['width']  = $imgWidth  * $finalWidth/$finalHeight;
-                $finalDimentions['x']      = (-1) * $fx1 * $finalDimentions['width'];
-                $finalDimentions['y']      = ($finalHeight - $finalDimentions['height']) / 2;
-            }
-            else
-            {
-                $finalDimentions['height'] = $finalHeight;
-                $finalDimentions['width']  = $finalHeight * $imgWidth / $imgHeight;
-                $finalDimentions['x']      = $finalWidth / 2 - ( $fx1 - $fx2 ) * $finalDimentions['width'] / 2;
-                $finalDimentions['y']      = 0;
-            }
-        }
-        else
-        {
-            $fheight = ( $fy2 - $fy1 ) * $imgHeight;
-            if ($fheight/$imgWidth > $finalWidth/$finalHeight)
-            {
-                $finalDimentions['height'] = $imgHeight * $finalHeight / $fheight;
-                $finalDimentions['width']  = $imgWidth * $finalHeight / $fheight;
-                $finalDimentions['x']      = ($finalWidth - $finalDimentions['width']) / 2;
-                $finalDimentions['y']      = (-1) * $fy1 * $finalDimentions['height'];
-            }
-            else
-            {
-                $finalDimentions['height'] = $finalWidth * $imgHeight / $imgWidth;
-                $finalDimentions['width']  = $finalWidth;
-                $finalDimentions['x']      = 0;
-                $finalDimentions['y']      = $finalHeight / 2 - ($fy1 + $fy2) * $finalDimentions['height'] / 2;
-            }
-        }
-        return $finalDimentions;
-    }
-    /**
-     * Save the image to the directory.
-     */
-    public function saveImage()
-    {
+	// Image object
+	public $image;
+	/**
+	 * Initilize parent image class
+	 * 
+	 * @param   string  $imgPath  Image path
+	 *
+	 * @since 4.0.0
+	 */
+	public function __construct($imgPath)
+	{
+		$this->image = new Image($imgPath);
+		$this->imgPath = $imgPath;
+		$this->checkDir();
+	}
+	/**
+	 * Crop the image around focus point and save it
+	 * 
+	 * @param   array    $dataFocus   Array of data focus points
+	 * @param   integer  $finalWidth  Disired width
+	 *
+	 * @return boolean
+	 *
+	 * @since 4.0.0
+	 */
+	public function compute($dataFocus, $finalWidth)
+	{
+		$fx = $dataFocus["box-left"];
+		$fy = $dataFocus["box-top"];
+		$fwidth = $dataFocus["box-width"];
+		$fheight = $dataFocus["box-height"];
 
-    }
-    /**
-     * Check if cache directory is present or not
-     */
-    public function checkDir()
-    {
-        
-    }
+		$mwidth = $this->image->getWidth();
+		$mheight = $this->image->getHeight();
+
+		$twidth = $finalWidth;
+		$theight = $twidth*$mheight/$mwidth;
+
+		if ($twidth<$fwidth || $theight<$fheight)
+		{
+			// Scale down the selection.
+			$finalImage = $this->image->crop($fwidth, $fheight, $fx, $fy);
+			$finalImage = $finalImage->resize($twidth, $theight);
+			$imgPath = explode('.', $this->imgPath);
+			$imgName = "/" . $twidth . "_" . base64_encode($imgPath[2]) . "." . $imgPath[3];
+			$path = $this->dataLocation . $imgName;
+			$finalImage->toFile($path);
+		}
+		elseif ($twidth>=$mwidth || $theight>=$mheight)
+		{
+			// Show original Image do nothing
+			$fx=0;
+			$fy=0;
+		}
+		else
+		{
+			$diff_x = ($twidth - $fwidth) / 2;
+			$fx = $fx - $diff_x;
+			$x2 = $fx + $twidth;
+			if ($x2>$mwidth)
+			{
+				$fx = $fx - ($x2-$mwidth);
+			}
+			elseif ($fx<0)
+			{
+				$fx=0;
+			}
+			$diff_y = ($theight - $fheight)/2;
+			$fy = $fy - $diff_y;
+			$y2 = $fy + $theight;
+			if ($y2>$mheight)
+			{
+				$fy = $fy - ($y2-$mheight);
+			}
+			elseif ($fy<0)
+			{
+				$fy=0;
+			}
+			$finalImage = $this->image->crop($twidth, $theight, $fx, $fy);
+			$imgPath = explode('.', $this->imgPath);
+			$imgName = "/" . $twidth . "_" . base64_encode($imgPath[2]) . "." . $imgPath[3];
+			$path = $this->dataLocation . $imgName;
+			$finalImage->toFile($path);
+		}
+		return true;
+	}
+	/**
+	 * Check if the cache directory is present or not
+	 * 
+	 * @return  boolean
+	 * 
+	 * @since 4.0.0
+	 */
+	public function checkDir()
+	{
+		if (!is_dir($this->dataLocation))
+		{
+			mkdir($this->dataLocation, 0777);
+		}
+		return true;
+	}
 }
