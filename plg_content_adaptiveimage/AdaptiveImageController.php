@@ -12,8 +12,9 @@ namespace Joomla\Component\Media\Administrator\Controller;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\Component\Media\Administrator\AdaptiveImage\FocusStoreInterface;
-use Joomla\Component\Media\Administrator\AdaptiveImage\JSONFocusStore;
+use Joomla\CMS\AdaptiveImage\JSONFocusStore;
+use Joomla\CMS\AdaptiveImage\SmartCrop;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Adaptive Image Controller Class
@@ -37,64 +38,60 @@ class AdaptiveImageController extends BaseController
 	 */
 	public function execute($task)
 	{
-		switch($task)
+		switch ($task)
 		{
 			case "setfocus" :
 				$imgPath = $this->input->getString('path');
 				$dataFocus = array (
-					"data-focus-top" 	=> $this->input->getFloat('data-focus-top'),
-					"data-focus-left"	=> $this->input->getFloat('data-focus-left'),
-					"data-focus-bottom" => $this->input->getFloat('data-focus-bottom'),
-					"data-focus-right"	=> $this->input->getFloat('data-focus-right'),
 					"box-left"			=> $this->input->getInt('box-left'),
 					"box-top"			=> $this->input->getInt('box-top'),
 					"box-width"			=> $this->input->getInt('box-width'),
 					"box-height"		=> $this->input->getInt('box-height')
 				);
 				$storage = new JSONFocusStore;
-				return $this->performTask($storage, $imgPath, "setfocus", $dataFocus);
-				
+				$storage->setFocus($dataFocus, $imgPath);
+				$this->cropImage($imgPath);
+				return true;
 				break;
 			case "cropBoxData" :
 				$this->app->setHeader('Content-Type', 'application/json');
 				$imgPath = $this->input->getString('path');
 				$storage = new JSONFocusStore;
-				echo $this->performTask($storage, $imgPath, "getfocus");
+				echo $storage->getFocus($imgPath);
 				$this->app->close();
-
+				return true;
+				break;
+			case "cropImage" :
+				// @TODO Resize image to any aspect ratio.
+				$imgPath = "/images/" . $this->input->getString('path');
+				
+				// $finalWidth = $this->input->getFloat('width');
+				$this->cropImage($imgPath);
+				return true;
 				break;
 			default :
 				return false;
 		}
-
 	}
 	/**
-	 * Call to the method of respective	class for the respective object passed
+	 * Crop the images around the focus area
 	 * 
-	 * @param   FocusStoreInterface  $storage    Storage Object
-	 * @param   String               $imgPath    Image Path
-	 * @param	String               $method     Type of method
-	 * @param   Array                $dataFocus  All the data focus points for image
+	 * @param   string  $imgPath  image path
 	 * 
+	 * @return  boolean
 	 * 
-	 * @return  mixed
-	 * 
-	 * @since 4.0.0
+	 * @since 4.0.0 
 	 */
-	protected function performTask(FocusStoreInterface $storage,  $imgPath, $method, $dataFocus=null)
+	public function cropImage($imgPath)
 	{
-		switch ($method)
+		$storage = new JSONFocusStore;
+		$dataFocus = json_decode($storage->getFocus($imgPath), true);
+		$width = array(240, 360, 480, 768, 940, 1024);
+		foreach ($width as $finalWidth)
 		{
-			case "setfocus" :
-				return $storage->setFocus($dataFocus, $imgPath);
-				break;
-
-			case "getfocus" :
-				return $storage->getFocus($imgPath);
-				break;
-
-			default :
-				return false;
+			$image = new SmartCrop(".." . $imgPath);
+			$image->compute($dataFocus, $finalWidth);
 		}
+		return true;
 	}
 }
