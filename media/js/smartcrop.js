@@ -36,44 +36,48 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 
 				image_width = image.naturalWidth;
 				image_height = image.naturalHeight;
-
-				// Top, Bottom, Left, right are the data focus points
-                Joomla.MediaManager.Edit.smartcrop.cropper.top = (top / image_height).toFixed(2);
-                Joomla.MediaManager.Edit.smartcrop.cropper.bottom = ((canvas_height + top) / image_height).toFixed(2);
-                Joomla.MediaManager.Edit.smartcrop.cropper.left = (left / image_width).toFixed(2);
-				Joomla.MediaManager.Edit.smartcrop.cropper.right = ((canvas_width + left) / image_width).toFixed(2);
-				 
-				// Setting the computed focus point into the input fields
-				document.getElementById('jform_data_focus_top').value = Joomla.MediaManager.Edit.smartcrop.cropper.top;
-				document.getElementById('jform_data_focus_bottom').value = Joomla.MediaManager.Edit.smartcrop.cropper.bottom;
-				document.getElementById('jform_data_focus_left').value = Joomla.MediaManager.Edit.smartcrop.cropper.left;
-				document.getElementById('jform_data_focus_right').value = Joomla.MediaManager.Edit.smartcrop.cropper.right;
-
+				
 				// Saveing cropbox data for focus area
 				Joomla.MediaManager.Edit.smartcrop.cropper.boxLeft = left;
 				Joomla.MediaManager.Edit.smartcrop.cropper.boxTop = top;
 				Joomla.MediaManager.Edit.smartcrop.cropper.boxWidth = canvas_width;
 				Joomla.MediaManager.Edit.smartcrop.cropper.boxHeight = canvas_height;
 
+				// Setting the computed focus point into the input fields
+				document.getElementById('jform_data_focus_x').value = left;
+				document.getElementById('jform_data_focus_y').value = top;
+				document.getElementById('jform_data_focus_width').value = canvas_width;
+				document.getElementById('jform_data_focus_height').value = canvas_height;
+
 				// Notify the app that a change has been made
 				window.dispatchEvent(new Event('mediaManager.history.point'));
 			}
 		});
+
+		// Wait for the image to load its data
+		image.addEventListener('load', function() {
+
+			// Set default aspect ratio after numeric check
+			var defaultCropFactor = image.naturalWidth / image.naturalHeight;
+			Joomla.MediaManager.Edit.smartcrop.cropper.setAspectRatio(defaultCropFactor);
+
+		});
+
 		var setFocusData = function(){
-			var data;
-			var path = getQueryVariable('path');
-			path = path.split(':');
+			var data, path, 
+				xhr, url;
+			path = getQueryVariable('path').split(':');
 			path = '/images' + path[1];
-			var xhr = new XMLHttpRequest();
-			var url = resolveBaseUrl() +"/administrator/index.php?option=com_media&task=adaptiveimage.cropBoxData&path="+path;
+			xhr = new XMLHttpRequest();
+			url = resolveBaseUrl() +"/administrator/index.php?option=com_media&task=adaptiveimage.cropBoxData&path="+path;
 			xhr.open("GET", url, true);
 			xhr.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					if(this.response!=''){
 						data = JSON.parse(this.responseText);
-						Joomla.MediaManager.Edit.smartcrop.cropper.setCropBoxData({
-						"left"	: data["box-left"],
-						"top"	: data["box-top"],
+						Joomla.MediaManager.Edit.smartcrop.cropper.setData({
+						"x"	: data["box-left"],
+						"y"	: data["box-top"],
 						"width"	: data["box-width"],
 						"height": data["box-height"]
 						});
@@ -83,7 +87,7 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 			xhr.send();
 		}
 		setFocusData();
-    }
+    };
 
     // Register the Events
 	Joomla.MediaManager.Edit.smartcrop = {
@@ -95,11 +99,7 @@ Joomla.MediaManager.Edit = Joomla.MediaManager.Edit || {};
 			var path = getQueryVariable('path');
 			path = path.split(':');
 			path = '/images' + path[1];
-			var data = "&data-focus-top="+Joomla.MediaManager.Edit.smartcrop.cropper.top+
-					"&data-focus-left="+Joomla.MediaManager.Edit.smartcrop.cropper.left+
-					"&data-focus-bottom="+Joomla.MediaManager.Edit.smartcrop.cropper.bottom+
-					"&data-focus-right="+Joomla.MediaManager.Edit.smartcrop.cropper.right+
-					"&box-left="+Joomla.MediaManager.Edit.smartcrop.cropper.boxLeft+
+			var data = "&box-left="+Joomla.MediaManager.Edit.smartcrop.cropper.boxLeft+
 					"&box-top="+Joomla.MediaManager.Edit.smartcrop.cropper.boxTop+
 					"&box-width="+Joomla.MediaManager.Edit.smartcrop.cropper.boxWidth+
 					"&box-height="+Joomla.MediaManager.Edit.smartcrop.cropper.boxHeight;
