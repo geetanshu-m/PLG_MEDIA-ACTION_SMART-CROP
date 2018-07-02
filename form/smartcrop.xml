@@ -17,41 +17,82 @@
 			type="spacer"
 			hr="true"
 		/>
+
 		<field
-			name="data_focus_top"
+			name="data_focus_x"
 			type="text"
-			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_TOP"
+			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_X"
 			hiddenLabel="true"
-			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_TOP_PRE"
+			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_X_PRE"
+			pattern="\d*\.?\d*"
+		/>
+		
+		<field
+			name="data_focus_y"
+			type="text"
+			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_Y"
+			hiddenLabel="true"
+			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_Y_PRE"
 			pattern="\d*\.?\d*"
 		/>
 
         <field
-			name="data_focus_bottom"
+			name="data_focus_width"
 			type="text"
-			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_BOTTOM"
+			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_WIDTH"
 			hiddenLabel="true"
-			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_BOTTOM_PRE"
+			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_WIDTH_PRE"
 			pattern="\d*\.?\d*"
 		/>
 
         <field
-			name="data_focus_left"
+			name="data_focus_height"
 			type="text"
-			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_LEFT"
+			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_HEIGHT"
 			hiddenLabel="true"
-			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_LEFT_PRE"
+			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_HEIGHT_PRE"
 			pattern="\d*\.?\d*"
 		/>
 
-        <field
-			name="data_focus_right"
-			type="text"
-			label="PLG_MEDIA-ACTION_SMARTCROP_PARAM_RIGHT"
-			hiddenLabel="true"
-			addonBefore="PLG_MEDIA-ACTION_SMARTCROP_PARAM_RIGHT_PRE"
-			pattern="\d*\.?\d*"
-		/>
+		<field
+			name="requestedWidth"
+			type="list"
+			label="Select all the required sizes"
+			class="smartcrop-requested-width"
+			multiple="true"
+			>
+			<option class="smartcrop-requested-width" value="240">240px</option>
+			<option class="smartcrop-requested-width" value="360">360px</option>
+			<option class="smartcrop-requested-width" value="480">480px</option>
+			<option class="smartcrop-requested-width" value="680">680px</option>
+			<option class="smartcrop-requested-width" value="720">720px</option>
+			<option class="smartcrop-requested-width" value="940">940px</option>
+			<option class="smartcrop-requested-width" value="1080">1080px</option>
+		</field>
+
+		<field
+			name="focusMoreHorizontal"
+			type="list"
+			label="Focus horizontally more towards"
+			class="focus-horizontal"
+			default="none"
+			>
+			<option class="focus-horizontal" value="none">None</option>
+			<option class="focus-horizontal" value="left">Left</option>
+			<option class="focus-horizontal" value="right">Right</option>
+		</field>
+
+		<field
+			name="focusMoreVerticle"
+			type="list"
+			label="Focus Vertically more towards"
+			class="focus-verticle"
+			default="none"
+			>
+			<option class="focus-verticle" value="none">None</option>
+			<option class="focus-verticle" value="top">Top</option>
+			<option class="focus-verticle" value="bottom">Bottom</option>
+		</field>
 
 	</fieldset>
 </form>
